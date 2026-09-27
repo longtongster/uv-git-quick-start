@@ -245,6 +245,19 @@ uv run pytest
 uv run ruff check .
 ```
 
+### Activate the environment explicitly (optional)
+
+You do not need to activate the environment when using `uv run`. For an interactive terminal session, however, you can activate the `.venv` created by `uv sync`:
+
+```bash
+source .venv/bin/activate
+python main.py
+pytest
+deactivate
+```
+
+After activation, `python` and tools such as `pytest` refer to the project environment until you run `deactivate` or close the terminal. When possible, prefer `uv run ...` in documentation and scripts because it makes the environment being used explicit.
+
 ### 5. Recreate an environment after cloning
 
 When another developer clones the repository, `pyproject.toml` describes the project and `uv.lock` describes the exact versions to install. They can reproduce the environment with:
