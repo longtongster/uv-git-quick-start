@@ -2,7 +2,86 @@
 
 This repository is a practical introduction to Git and [uv](https://docs.astral.sh/uv/): Git tracks our code, while uv creates a fast, reproducible Python workflow.
 
-## Why uv?
+## Git and GitHub quick start
+
+Git records the history of your project. GitHub hosts a copy of that repository online so you can back it up, collaborate, and share your work.
+
+### Install Git on Ubuntu/WSL
+
+Update the package list and install Git from the Ubuntu repositories:
+
+```bash
+sudo apt update
+sudo apt install git
+```
+
+Check the installation:
+
+```bash
+git --version
+```
+
+Set your identity once. Use the same name and email associated with your GitHub account:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
+```
+
+### Create or clone a repository
+
+To start a new local project:
+
+```bash
+mkdir my-project
+cd my-project
+git init
+```
+
+To download an existing GitHub repository:
+
+```bash
+git clone https://github.com/your-user/your-repository.git
+cd your-repository
+```
+
+### Typical GitHub workflow
+
+The usual cycle is: get the latest changes, edit files, inspect the changes, commit them, and push the commit to GitHub.
+
+```bash
+# Start from the latest version on GitHub
+git pull
+
+# Edit files, then inspect what changed
+git status
+git diff
+
+# Select changes and save a snapshot locally
+git add README.md
+git commit -m "Explain the project workflow"
+
+# Upload your local commits to GitHub
+git push
+```
+
+`git add` selects what belongs in the next commit. `git commit` records that snapshot locally. `git push` publishes it on GitHub. You can stage all changed files with `git add .`, but review `git status` first.
+
+For a new local repository, create an empty repository on GitHub, connect it as a remote, and push the first commit:
+
+```bash
+git remote add origin https://github.com/your-user/your-repository.git
+git branch -M main
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+```
+
+You need permission to push to a GitHub repository. For repositories you do not own, create a fork or work on a branch and open a pull request.
+
+## uv quick start
+
+### Why uv?
 
 Python projects traditionally combine several tools: `venv` for isolation, `pip` for installation, and another tool for dependency locking or Python versions. uv brings the common workflow together in one fast command-line tool.
 
@@ -58,6 +137,49 @@ Add the packages the application needs:
 uv add requests
 ```
 
+You can choose the version by adding a version requirement. Use quotes so the shell does not interpret characters such as `>` or `<`:
+
+```bash
+# Install exactly version 2.31.0
+uv add "requests==2.31.0"
+
+# Allow compatible releases from 2.31 up to, but not including, 3.0
+uv add "requests>=2.31,<3"
+```
+
+The selected version is written to `pyproject.toml`, resolved in `uv.lock`, and installed into `.venv`. If you later want to change the requirement, run `uv add` again with the new version constraint.
+
+You can also declare or edit the requirement directly in `pyproject.toml`:
+
+```toml
+[project]
+dependencies = [
+    "requests>=2.31,<3",
+]
+```
+
+After editing the file, resolve the dependency and update the environment:
+
+```bash
+uv lock    # Resolve dependencies and update uv.lock
+uv sync    # Install the locked dependencies into .venv
+```
+
+This is similar to `poetry update`, but the uv commands make the two actions explicit. `uv sync` normally updates the lockfile when needed as well, so the short version is often just:
+
+```bash
+uv sync
+```
+
+To update a package to the newest version allowed by the requirement in `pyproject.toml`, use:
+
+```bash
+uv lock --upgrade-package requests
+uv sync
+```
+
+To upgrade all dependencies allowed by their requirements, use `uv lock --upgrade` followed by `uv sync`. Review and commit the resulting `uv.lock` change.
+
 Add tools used only while developing or testing:
 
 ```bash
@@ -112,23 +234,4 @@ Commit `pyproject.toml`, `uv.lock`, source code, and tests. Do not commit the lo
 
 ```gitignore
 .venv/
-```
-
-## Git quick start
-
-### Create a repository
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-```
-
-### Clone a repository
-
-You can clone public repositories, but you can only push code to repositories where you have permission:
-
-```bash
-git clone https://github.com/longtongster/uv-git-quick-start.git
-cd uv-git-quick-start
 ```
