@@ -1,38 +1,134 @@
-# uv-git-quick-start
-This is a quick start to install the package manager uv and git locally
+# Git and uv quick start
 
-# uv quick start
+This repository is a practical introduction to Git and [uv](https://docs.astral.sh/uv/): Git tracks our code, while uv creates a fast, reproducible Python workflow.
 
-### Background
-The Python ecosystem relies on several foundational package managers, each serving distinct deployment and workflow needs. **Pip** is the universal, standard installer bundled with Python for retrieving packages from the Python Package Index (PyPI), traditionally paired with **venv** for environment isolation. In contrast, **Conda** is a cross-platform, language-agnostic manager widely adopted in data science for its ability to seamlessly handle complex non-Python binaries and virtual environments. For unified application workflows, first-generation lockfile tools like **Pipenv** and **Poetry** bridge the gap by combining dependency resolution, environment isolation, and strict reproducibility into a single developer experience.
+## Why uv?
 
-### Why uv?
-Modern Python development often suffers from slow dependency resolution and fragmented tooling when juggling legacy managers like Conda and Pipenv. **uv** solves these pain points by acting as a single, ultra-fast tool written in Rust that replaces pip, pip-tools, virtualenv, and poetry/pipenv workflows entirely. While Conda is notoriously slow and resource-heavy when solving complex binary environments, and Pipenv frequently struggles with slow locking times and deterministic stability, **uv** delivers up to **10–100x faster installations** and seamless, zero-config environment management, drastically reducing developer friction and CI/CD pipeline costs.
+Python projects traditionally combine several tools: `venv` for isolation, `pip` for installation, and another tool for dependency locking or Python versions. uv brings the common workflow together in one fast command-line tool.
 
-### Installation on Ubuntu WSL
+It manages virtual environments, dependencies, lockfiles, Python versions, and project commands. `pyproject.toml` declares what the project needs and `uv.lock` records exact versions. Commit both so teammates and CI can recreate the same environment.
 
-To install **uv**, run the official standalone installer script in your WSL terminal:
+## Short workflow
+
+### 1. Install and verify uv
+
+Follow the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/), then run:
 
 ```bash
-curl -LsSf https://astral.sh | sh
+uv --version
 ```
 
-### Next Steps
-1. **Restart your terminal** (or run `source ~/.bashrc`) to apply the changes.
-2. Verify that it works by checking the version:
-3. 
-   ```bash
-   uv --version
-   ```
+On Ubuntu/WSL, the standalone installer is:
 
-# git quick start
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Restart the terminal or run `source ~/.bashrc` if your shell cannot find `uv`.
+
+### 2. Create or clone a project
+
+`uv init` creates the project structure and writes the project metadata to `pyproject.toml`. It does not install dependencies or create the virtual environment yet:
+
+```bash
+uv init my-project
+cd my-project
+```
+
+Now create the virtual environment and install the project with:
+
+```bash
+uv sync
+```
+
+`uv sync` creates the local `.venv` directory and the `uv.lock` lockfile. The `.venv` directory is for your machine and should not be committed; `uv.lock` records exact versions and should be committed.
+
+For an existing project:
+
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
+
+### 3. Add and change dependencies
+
+Add the packages the application needs:
+
+```bash
+uv add requests
+```
+
+Add tools used only while developing or testing:
+
+```bash
+uv add --dev pytest ruff
+```
+
+Remove a package when it is no longer needed:
+
+```bash
+uv remove requests
+```
+
+These commands update `pyproject.toml`, update `uv.lock`, and synchronise `.venv`. In other words, use `uv add` and `uv remove` to change the project; use `uv sync` to make a local environment match the project files.
+
+### 4. Run commands
+
+Use `uv run` to execute a command inside the project’s virtual environment. You do not need to activate `.venv` manually:
+
+```bash
+uv run python main.py
+uv run pytest
+uv run ruff check .
+```
+
+### 5. Recreate an environment after cloning
+
+When another developer clones the repository, `pyproject.toml` describes the project and `uv.lock` describes the exact versions to install. They can reproduce the environment with:
+
+```bash
+git clone <repository-url>
+cd <repository-directory>
+uv sync
+uv run pytest
+```
+
+Here `uv sync` creates `.venv` if necessary and installs the locked dependencies. `uv run pytest` then runs the tests in that environment. Do not edit `uv.lock` manually.
+
+## Useful commands
+
+| Goal | Command |
+| --- | --- |
+| Inspect dependencies | `uv tree` |
+| Update the lockfile | `uv lock --upgrade` |
+| Run a one-off tool | `uvx TOOL` |
+| Show help | `uv help` |
+
+Use `uvx ruff check .` for a one-off tool. If the project uses Ruff regularly, add it with `uv add --dev ruff` so its version is shared.
+
+## What to commit
+
+Commit `pyproject.toml`, `uv.lock`, source code, and tests. Do not commit the local environment; add this to `.gitignore`:
+
+```gitignore
+.venv/
+```
+
+## Git quick start
 
 ### Create a repository
 
-### Clone a repository
-You can clone (download) public repositories but you can only push (check in) your code in a repos for which you are authorised.
-
-``bash
-git clone https://github.com/longtongster/uv-git-quick-start.git
+```bash
+git init
+git add .
+git commit -m "Initial commit"
 ```
 
+### Clone a repository
+
+You can clone public repositories, but you can only push code to repositories where you have permission:
+
+```bash
+git clone https://github.com/longtongster/uv-git-quick-start.git
+cd uv-git-quick-start
+```
