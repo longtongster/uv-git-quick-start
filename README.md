@@ -1,5 +1,7 @@
 # Git and uv quick start
 
+This quick start is written for Daan van Weeren and his astronomy matties. I hope it is clear. Let me know if you have any questions.
+
 This repository is a practical introduction to Git and [uv](https://docs.astral.sh/uv/): Git tracks our code, while uv creates a fast, reproducible Python workflow.
 
 ## Git and GitHub quick start
