@@ -274,3 +274,31 @@ Commit `pyproject.toml`, `uv.lock`, source code, and tests. Do not commit the lo
 ```gitignore
 .venv/
 ```
+
+## Practice exercise: run a small pandas project
+
+This repository includes a tiny sales analysis so you can practice the complete workflow. The Python script uses `pandas`, which is declared in `pyproject.toml`; the exact dependency versions are recorded in `uv.lock`.
+
+After cloning the repository, run:
+
+```bash
+uv sync
+uv run python analyze_sales.py
+```
+
+The first command reads `pyproject.toml` and `uv.lock`, creates `.venv`, and installs pandas and its dependencies. The second command runs the script inside that environment and prints each product’s revenue and the total revenue. The script would fail with a plain `python analyze_sales.py` on a clean machine because pandas would not be installed in that machine’s default Python environment.
+
+Try changing `sales.csv`, run the script again, and inspect the files Git sees as changed:
+
+```bash
+git status
+git diff
+```
+
+You can also see which packages uv installed:
+
+```bash
+uv tree
+```
+
+The exercise demonstrates the main idea: the source code, `pyproject.toml`, and `uv.lock` are shared through Git; `.venv` is created locally by `uv sync` and is not committed.
