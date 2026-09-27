@@ -4,7 +4,9 @@ This repository is a practical introduction to Git and [uv](https://docs.astral.
 
 ## Git and GitHub quick start
 
-Git records the history of your project. GitHub hosts a copy of that repository online so you can back it up, collaborate, and share your work.
+Git is a tool for keeping a reliable history of your code. Instead of having only the latest copy of a file, you can save meaningful snapshots, see what changed, undo mistakes, and return to an earlier working version.
+
+Git is also useful beyond version control. Your Git repository normally lives on your computer, but you can push it to a remote service such as GitHub. That gives you an off-computer backup if your laptop is lost or breaks, and makes collaboration possible. GitHub is not an automatic backup, though: your recent commits are protected only after you push them.
 
 ### Install Git on Ubuntu/WSL
 
@@ -67,6 +69,35 @@ git push
 
 `git add` selects what belongs in the next commit. `git commit` records that snapshot locally. `git push` publishes it on GitHub. You can stage all changed files with `git add .`, but review `git status` first.
 
+### Undo changes safely
+
+Git gives you several ways to recover when something goes wrong. Check `git status` before choosing an action:
+
+```bash
+# Discard uncommitted changes in one file
+# Warning: the edits in this file cannot be recovered easily
+git restore README.md
+
+# Remove a file from the staging area, but keep its edits
+git restore --staged README.md
+```
+
+If a commit has already been made, use `git revert`. This creates a new commit that reverses the earlier one, which is safe for commits already shared on GitHub:
+
+```bash
+# Reverse the most recent commit
+git revert HEAD
+```
+
+For an earlier commit, find its identifier with `git log --oneline`, then run:
+
+```bash
+git revert <commit-id>
+git push
+```
+
+Avoid rewriting shared history with commands such as `git reset --hard` unless you fully understand the consequences. A revert keeps the history visible and works safely for collaborative repositories.
+
 For a new local repository, create an empty repository on GitHub, connect it as a remote, and push the first commit:
 
 ```bash
@@ -83,9 +114,17 @@ You need permission to push to a GitHub repository. For repositories you do not 
 
 ### Why uv?
 
-Python projects traditionally combine several tools: `venv` for isolation, `pip` for installation, and another tool for dependency locking or Python versions. uv brings the common workflow together in one fast command-line tool.
+Python projects need more than an interpreter: they need isolated environments, installed packages, and a way to reproduce the same setup on another computer. The traditional approach combines `venv` for isolation with `pip` for installation, plus extra tools or manual steps for locking dependencies and managing Python versions.
 
-It manages virtual environments, dependencies, lockfiles, Python versions, and project commands. `pyproject.toml` declares what the project needs and `uv.lock` records exact versions. Commit both so teammates and CI can recreate the same environment.
+uv brings these common tasks into one fast tool. It creates virtual environments, installs and resolves packages, maintains a lockfile, can manage Python versions, and runs project commands. The result is a short, consistent workflow: declare requirements in `pyproject.toml`, record exact versions in `uv.lock`, and run commands with `uv run`.
+
+### Why prefer uv?
+
+- Compared with `pip` and `venv` alone, uv provides dependency resolution, locking, and environment management in one workflow. You do not need to remember separate commands for each task.
+- Compared with Pipenv or Poetry, uv offers a similar project-and-lockfile workflow with a fast resolver and a lightweight command-line interface. Existing Pipenv and Poetry projects can still be perfectly valid; uv is an alternative, not a requirement.
+- Compared with Conda, uv focuses on Python packages and Python project workflows. It is usually a simpler choice for ordinary Python applications and libraries. Conda remains a strong choice when a project depends heavily on non-Python system libraries, scientific tooling, or Conda-specific environments.
+
+uv does not make every other tool obsolete. Its advantage here is a clear, reproducible Python workflow with fewer moving parts. Commit both `pyproject.toml` and `uv.lock` so teammates and CI can recreate the same environment.
 
 ## Short workflow
 
