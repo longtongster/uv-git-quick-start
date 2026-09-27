@@ -20,7 +20,19 @@ curl -LsSf https://astral.sh | sh
 ### Next Steps
 1. **Restart your terminal** (or run `source ~/.bashrc`) to apply the changes.
 2. Verify that it works by checking the version:
+3. 
    ```bash
    uv --version
    ```
+
+# git quick start
+
+### Create a repository
+
+### Clone a repository
+You can clone (download) public repositories but you can only push (check in) your code in a repos for which you are authorised.
+
+``bash
+git clone https://github.com/longtongster/uv-git-quick-start.git
+```
 
