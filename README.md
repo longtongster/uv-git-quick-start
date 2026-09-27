@@ -304,3 +304,41 @@ uv tree
 ```
 
 The exercise demonstrates the main idea: the source code, `pyproject.toml`, and `uv.lock` are shared through Git; `.venv` is created locally by `uv sync` and is not committed.
+
+## Appendix: Visual Studio Code with WSL
+
+Visual Studio Code is optional. For a WSL-based workflow, install the VS Code application on **Windows**, then connect it to Ubuntu/WSL with the Microsoft **WSL** extension. You normally do not need to install a second copy of VS Code inside WSL.
+
+### Setup
+
+1. Install [Visual Studio Code](https://code.visualstudio.com/) on Windows.
+2. Open VS Code and install the **WSL** extension from Microsoft.
+3. In an Ubuntu/WSL terminal, go to the project directory and run:
+
+   ```bash
+   code .
+   ```
+
+VS Code opens the project using the WSL environment. The editor runs on Windows, while terminals, Python, Git, uv, and project files are accessed through Linux/WSL.
+
+### Select the project Python interpreter
+
+Install the Microsoft **Python** extension if VS Code suggests it. Then open the Command Palette with `Ctrl+Shift+P`, choose **Python: Select Interpreter**, and select the interpreter inside the project:
+
+```text
+.venv/bin/python
+```
+
+If it is not listed, run `uv sync` in the VS Code terminal first and reload the window. Commands run from the integrated terminal should then work as they do in the WSL terminal:
+
+```bash
+uv run python analyze_sales.py
+uv run pytest
+```
+
+Keep the project files inside the WSL filesystem, for example under `~/projects`, rather than under `/mnt/c`, when possible. This generally gives better performance and avoids file-permission surprises.
+
+## Further reading
+
+- Git: [Pro Git book](https://git-scm.com/book/en/v2)
+- uv: [Official uv documentation](https://docs.astral.sh/uv/)
