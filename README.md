@@ -116,15 +116,17 @@ You need permission to push to a GitHub repository. For repositories you do not 
 
 Python projects need more than an interpreter: they need isolated environments, installed packages, and a way to reproduce the same setup on another computer. The traditional approach combines `venv` for isolation with `pip` for installation, plus extra tools or manual steps for locking dependencies and managing Python versions.
 
-uv brings these common tasks into one fast tool. It creates virtual environments, installs and resolves packages, maintains a lockfile, can manage Python versions, and runs project commands. The result is a short, consistent workflow: declare requirements in `pyproject.toml`, record exact versions in `uv.lock`, and run commands with `uv run`.
+uv is a modern Python package and project manager written in Rust. Its biggest practical advantage is speed: the uv project reports installations up to **10–100 times faster than pip**, depending on the workload and whether packages are cached. It also uses a global cache so the same packages do not need to be downloaded repeatedly. See the [official uv overview](https://docs.astral.sh/uv/) for benchmarks and details.
+
+More importantly for this tutorial, uv combines the whole project workflow in one tool. It creates virtual environments, resolves and installs packages, maintains a lockfile, can install Python versions, and runs project commands. The result is a short, consistent workflow: declare requirements in `pyproject.toml`, record exact versions in `uv.lock`, and run commands with `uv run`.
 
 ### Why prefer uv?
 
-- Compared with `pip` and `venv` alone, uv provides dependency resolution, locking, and environment management in one workflow. You do not need to remember separate commands for each task.
-- Compared with Pipenv or Poetry, uv offers a similar project-and-lockfile workflow with a fast resolver and a lightweight command-line interface. Existing Pipenv and Poetry projects can still be perfectly valid; uv is an alternative, not a requirement.
-- Compared with Conda, uv focuses on Python packages and Python project workflows. It is usually a simpler choice for ordinary Python applications and libraries. Conda remains a strong choice when a project depends heavily on non-Python system libraries, scientific tooling, or Conda-specific environments.
+- Compared with `pip` and `venv` alone, uv is much faster and provides dependency resolution, locking, and environment management in one workflow.
+- Compared with Pipenv or Poetry, uv provides the same general project-and-lockfile experience with a particularly fast resolver and a lightweight, unified CLI.
+- Compared with Conda, uv is the better default for ordinary Python applications and libraries: it is focused and much faster for resolving and installing Python packages. Conda is a larger, heavier environment manager and can be noticeably—or sometimes dramatically—slower, especially while solving complex environments. Its broader support for non-Python binaries can still be useful in specialized scientific projects, but it is more tooling than most Python applications need.
 
-uv does not make every other tool obsolete. Its advantage here is a clear, reproducible Python workflow with fewer moving parts. Commit both `pyproject.toml` and `uv.lock` so teammates and CI can recreate the same environment.
+For this tutorial, we recommend uv as the default Python tool. Other tools remain valid in projects that already depend on them, but a new Python project can start with fewer moving parts using uv. Commit both `pyproject.toml` and `uv.lock` so teammates and CI can recreate the same environment.
 
 ## Short workflow
 
